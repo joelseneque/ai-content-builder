@@ -1,4 +1,6 @@
 /node_modules
+/vendor
 /resources/dist
 /vite.hot
 .DS_Store
+composer.lock
