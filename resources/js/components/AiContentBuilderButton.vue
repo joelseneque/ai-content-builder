@@ -150,7 +150,8 @@ export default {
             this.error = null;
 
             try {
-                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                // Get CSRF token from Statamic's config
+                const csrfToken = Statamic.$config.get('csrfToken');
                 if (!csrfToken) {
                     throw new Error('CSRF token not found');
                 }
@@ -159,7 +160,7 @@ export default {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken.content,
+                        'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json',
                     },
                     body: JSON.stringify({
