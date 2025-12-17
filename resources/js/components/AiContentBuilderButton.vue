@@ -40,9 +40,20 @@
                     </p>
                 </div>
 
-                <!-- Word Limit Info -->
-                <div v-if="wordLimit > 0" class="mb-4 text-xs text-gray-500">
-                    {{ __('Word limit:') }} {{ wordLimit }} {{ __('words') }}
+                <!-- AI Response Word Count -->
+                <div v-if="maxWordLimit > 0" class="mb-4">
+                    <label class="block text-sm font-medium mb-2">
+                        {{ __('AI Response Word Count') }}
+                    </label>
+                    <input
+                        type="number"
+                        v-model.number="requestedWordCount"
+                        class="input-text w-24"
+                        :min="1"
+                        :max="maxWordLimit"
+                        :disabled="loading"
+                    />
+                    <span class="text-xs text-gray-500 ml-2">{{ __('max') }} {{ maxWordLimit }}</span>
                 </div>
 
                 <!-- Error Message -->
@@ -91,6 +102,7 @@ export default {
         return {
             modalActive: false,
             userPrompt: '',
+            requestedWordCount: 100,
             loading: false,
             error: null,
         };
@@ -103,8 +115,15 @@ export default {
         systemPrompt() {
             return this.config.ai_prompt || null;
         },
-        wordLimit() {
+        maxWordLimit() {
             return parseInt(this.config.ai_word_limit) || 250;
+        },
+        effectiveWordCount() {
+            // Ensure requested count doesn't exceed max limit
+            if (this.maxWordLimit > 0 && this.requestedWordCount > this.maxWordLimit) {
+                return this.maxWordLimit;
+            }
+            return this.requestedWordCount || 100;
         },
     },
 
@@ -139,6 +158,7 @@ export default {
 
         resetState() {
             this.userPrompt = '';
+            this.requestedWordCount = 100;
             this.error = null;
             this.loading = false;
         },
@@ -166,7 +186,7 @@ export default {
                     body: JSON.stringify({
                         prompt: this.userPrompt,
                         system_prompt: this.systemPrompt,
-                        word_limit: this.wordLimit,
+                        word_limit: this.effectiveWordCount,
                     }),
                 });
 

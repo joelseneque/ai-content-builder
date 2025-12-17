@@ -55,8 +55,8 @@ class ServiceProvider extends AddonServiceProvider
                 'width' => 100,
             ],
             'ai_word_limit' => [
-                'display' => __('AI Word Limit'),
-                'instructions' => __('Maximum number of words for AI-generated content (0-1000). Set to 0 for no limit.'),
+                'display' => __('Max AI Word Response Limit'),
+                'instructions' => __('Maximum words users can request from AI (0-1000). Users can choose any amount up to this limit. Set to 0 for no limit.'),
                 'type' => 'integer',
                 'default' => 250,
                 'width' => 50,
