@@ -1,0 +1,23 @@
+{
+    "name": "pqd/ai-content-builder",
+    "description": "AI Content Builder for Statamic Bard - OpenAI-powered content generation",
+    "autoload": {
+        "psr-4": {
+            "Pqd\\AiContentBuilder\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "AI Content Builder",
+            "description": "OpenAI-powered content generation for Bard"
+        },
+        "laravel": {
+            "providers": [
+                "Pqd\\AiContentBuilder\\ServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "statamic/cms": "^5.0"
+    }
+}

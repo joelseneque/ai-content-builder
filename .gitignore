@@ -1,0 +1,4 @@
+/node_modules
+/resources/dist
+/vite.hot
+.DS_Store
