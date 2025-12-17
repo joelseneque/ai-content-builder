@@ -1,5 +1,5 @@
 {
-    "name": "pqd/ai-content-builder",
+    "name": "joelseneque/ai-content-builder",
     "description": "AI Content Builder for Statamic Bard - OpenAI-powered content generation",
     "autoload": {
         "psr-4": {
