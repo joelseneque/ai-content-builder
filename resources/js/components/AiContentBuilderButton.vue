@@ -156,7 +156,7 @@ export default {
                     throw new Error('CSRF token not found');
                 }
 
-                const response = await fetch('/cp/pqd/ai-content-builder/ai-content/generate', {
+                const response = await fetch('/cp/ai-content/generate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
