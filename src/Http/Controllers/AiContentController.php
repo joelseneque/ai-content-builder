@@ -38,7 +38,7 @@ class AiContentController extends Controller
             $systemContent .= "\n\nIMPORTANT: Keep your response under {$wordLimit} words.";
         }
 
-        $systemContent .= "\n\nFormat your response in Markdown. Use headings, lists, bold, and other formatting as appropriate for the content.";
+        $systemContent .= "\n\nFormat your response in Markdown. Use headings, lists, bold, and other formatting as appropriate for the content. Always use Australian English spelling and conventions (e.g., colour, organisation, centre, licence).";
 
         if (! empty(trim($systemContent))) {
             $messages[] = [
