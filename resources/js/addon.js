@@ -4,9 +4,6 @@ import AiContentBuilderButton from './components/AiContentBuilderButton.vue';
 const aiIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="m14.04 14.863l-.886 3.099c-.332 1.16-1.976 1.16-2.308 0l-.885-3.099a1.2 1.2 0 0 0-.824-.824l-3.099-.885c-1.16-.332-1.16-1.976 0-2.308l3.099-.885a1.2 1.2 0 0 0 .824-.824l.885-3.099c.332-1.16 1.976-1.16 2.308 0l.885 3.099a1.2 1.2 0 0 0 .824.824l3.099.885c1.16.332 1.16 1.976 0 2.308l-3.099.885a1.2 1.2 0 0 0-.824.824m5.531 4.853l-.376 1.508c-.05.202-.337.202-.388 0l-.377-1.508a.2.2 0 0 0-.145-.145l-1.508-.377c-.202-.05-.202-.337 0-.388l1.508-.377a.2.2 0 0 0 .145-.145l.377-1.508c.05-.202.337-.202.388 0l.377 1.508a.2.2 0 0 0 .145.145l1.508.377c.202.05.202.337 0 .388l-1.508.377a.2.2 0 0 0-.145.145m-14.001-14l-.376 1.508c-.05.202-.338.202-.388 0l-.377-1.508a.2.2 0 0 0-.145-.145l-1.508-.377c-.202-.05-.202-.338 0-.388l1.508-.377a.2.2 0 0 0 .145-.145l.377-1.508c.05-.202.338-.202.388 0l.377 1.508a.2.2 0 0 0 .145.145l1.508.377c.202.05.202.338 0 .388l-1.508.377a.2.2 0 0 0-.145.145"/></svg>`;
 
 Statamic.booting(() => {
-    // Register the Vue component
-    Statamic.$components.register('AiContentBuilderButton', AiContentBuilderButton);
-
     // Check if AI Content Builder is enabled (API key is set)
     const config = Statamic.$config.get('aiContentBuilder');
     if (!config?.enabled) {
@@ -14,17 +11,13 @@ Statamic.booting(() => {
         return;
     }
 
-    // Register the Bard button
-    Statamic.$bard.buttons((buttons, button) => {
-        const aiButton = button({
+    // Register the Bard button - v6 returns the button instead of pushing to array
+    Statamic.$bard.buttons((_buttons, button) => {
+        return button({
             name: 'ai_content_builder',
             text: __('AI Content Builder'),
-            component: 'AiContentBuilderButton',
+            component: AiContentBuilderButton,
             html: aiIcon,
         });
-
-        if (aiButton) {
-            buttons.push(aiButton);
-        }
     });
 });

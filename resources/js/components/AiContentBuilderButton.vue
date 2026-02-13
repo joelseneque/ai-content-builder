@@ -1,230 +1,192 @@
 <template>
-    <popover ref="popover" placement="bottom-start" @closed="handleClose" :clickaway="false">
+    <Popover ref="popoverRef" align="start" :inset="true">
         <template #trigger>
-            <button
-                class="bard-toolbar-button"
-                :class="{ active: modalActive }"
-                v-tooltip="button.text"
+            <Button
+                variant="ghost"
+                size="sm"
                 :aria-label="button.text"
-                @click="toggleModal"
             >
                 <div class="flex items-center" v-html="button.html"></div>
-            </button>
+            </Button>
         </template>
-        <template #default>
-            <div v-if="modalActive" class="ai-content-builder-modal p-4" style="width: 400px; max-width: 90vw;">
-                <h3 class="text-lg font-semibold mb-3">{{ __('AI Content Builder') }}</h3>
 
-                <!-- Instructions -->
-                <div v-if="instructions" class="mb-4 p-3 bg-gray-100 dark:bg-dark-700 rounded-md text-sm">
-                    <p class="text-gray-700 dark:text-dark-150 whitespace-pre-wrap">{{ instructions }}</p>
-                </div>
+        <div class="ai-content-builder-modal p-4" style="width: 400px; max-width: 90vw;">
+            <h3 class="text-lg font-semibold mb-3">{{ __('AI Content Builder') }}</h3>
 
-                <!-- User Input -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-2">
-                        {{ __('What content would you like to generate?') }}
-                    </label>
-                    <textarea
-                        ref="promptInput"
-                        v-model="userPrompt"
-                        class="input-text w-full"
-                        style="min-height: 120px;"
-                        :placeholder="__('Describe the content you want to create...')"
-                        :disabled="loading"
-                        @keydown.meta.enter="generateContent"
-                        @keydown.ctrl.enter="generateContent"
-                    ></textarea>
-                    <p class="text-xs text-gray-500 mt-1">
-                        {{ __('Press Cmd+Enter (Mac) or Ctrl+Enter (Win) to generate') }}
-                    </p>
-                </div>
-
-                <!-- AI Response Word Count -->
-                <div v-if="maxWordLimit > 0" class="mb-4">
-                    <label class="block text-sm font-medium mb-2">
-                        {{ __('AI Response Word Count') }}
-                    </label>
-                    <input
-                        type="number"
-                        v-model.number="requestedWordCount"
-                        class="input-text w-24"
-                        :min="1"
-                        :max="maxWordLimit"
-                        :disabled="loading"
-                    />
-                    <span class="text-xs text-gray-500 ml-2">{{ __('max') }} {{ maxWordLimit }}</span>
-                </div>
-
-                <!-- Error Message -->
-                <div v-if="error" class="mb-4 p-3 bg-red-100 dark:bg-red-900/30 rounded-md text-sm text-red-700 dark:text-red-300">
-                    {{ error }}
-                </div>
-
-                <!-- Actions -->
-                <div class="flex justify-end gap-2">
-                    <button
-                        type="button"
-                        class="btn"
-                        @click="closeModal"
-                        :disabled="loading"
-                    >
-                        {{ __('Cancel') }}
-                    </button>
-                    <button
-                        type="button"
-                        class="btn-primary"
-                        @click="generateContent"
-                        :disabled="loading || !userPrompt.trim()"
-                    >
-                        <span v-if="loading" class="flex items-center gap-2">
-                            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            {{ __('Generating...') }}
-                        </span>
-                        <span v-else>{{ __('Generate Content') }}</span>
-                    </button>
-                </div>
+            <!-- Instructions -->
+            <div v-if="instructions" class="mb-4 p-3 bg-gray-100 dark:bg-dark-700 rounded-md text-sm">
+                <p class="text-gray-700 dark:text-dark-150 whitespace-pre-wrap">{{ instructions }}</p>
             </div>
-        </template>
-    </popover>
+
+            <!-- User Input -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">
+                    {{ __('What content would you like to generate?') }}
+                </label>
+                <textarea
+                    v-model="userPrompt"
+                    class="input-text w-full"
+                    style="min-height: 120px;"
+                    :placeholder="__('Describe the content you want to create...')"
+                    :disabled="loading"
+                    @keydown.meta.enter="generateContent"
+                    @keydown.ctrl.enter="generateContent"
+                ></textarea>
+                <p class="text-xs text-gray-500 mt-1">
+                    {{ __('Press Cmd+Enter (Mac) or Ctrl+Enter (Win) to generate') }}
+                </p>
+            </div>
+
+            <!-- AI Response Word Count -->
+            <div v-if="maxWordLimit > 0" class="mb-4">
+                <label class="block text-sm font-medium mb-2">
+                    {{ __('AI Response Word Count') }}
+                </label>
+                <input
+                    type="number"
+                    v-model.number="requestedWordCount"
+                    class="input-text w-24"
+                    :min="1"
+                    :max="maxWordLimit"
+                    :disabled="loading"
+                />
+                <span class="text-xs text-gray-500 ml-2">{{ __('max') }} {{ maxWordLimit }}</span>
+            </div>
+
+            <!-- Error Message -->
+            <div v-if="error" class="mb-4 p-3 bg-red-100 dark:bg-red-900/30 rounded-md text-sm text-red-700 dark:text-red-300">
+                {{ error }}
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-2">
+                <button
+                    type="button"
+                    class="btn"
+                    @click="closePopover"
+                    :disabled="loading"
+                >
+                    {{ __('Cancel') }}
+                </button>
+                <button
+                    type="button"
+                    class="btn-primary"
+                    @click="generateContent"
+                    :disabled="loading || !userPrompt.trim()"
+                >
+                    <span v-if="loading" class="flex items-center gap-2">
+                        <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {{ __('Generating...') }}
+                    </span>
+                    <span v-else>{{ __('Generate Content') }}</span>
+                </button>
+            </div>
+        </div>
+    </Popover>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
+import { Button, Popover } from '@statamic/cms/ui';
 import { marked } from 'marked';
 
-export default {
-    mixins: [BardToolbarButton],
+const props = defineProps({
+    button: Object,
+    active: Boolean,
+    variant: String,
+    config: Object,
+    bard: {},
+    editor: {},
+});
 
-    data() {
-        return {
-            modalActive: false,
-            userPrompt: '',
-            requestedWordCount: 100,
-            loading: false,
-            error: null,
-        };
-    },
+const popoverRef = ref(null);
+const userPrompt = ref('');
+const requestedWordCount = ref(100);
+const loading = ref(false);
+const error = ref(null);
 
-    computed: {
-        instructions() {
-            return this.config.ai_instructions || null;
-        },
-        systemPrompt() {
-            return this.config.ai_prompt || null;
-        },
-        maxWordLimit() {
-            return parseInt(this.config.ai_word_limit) || 250;
-        },
-        effectiveWordCount() {
-            // Ensure requested count doesn't exceed max limit
-            if (this.maxWordLimit > 0 && this.requestedWordCount > this.maxWordLimit) {
-                return this.maxWordLimit;
-            }
-            return this.requestedWordCount || 100;
-        },
-    },
+const instructions = computed(() => props.config?.ai_instructions || null);
+const systemPrompt = computed(() => props.config?.ai_prompt || null);
+const maxWordLimit = computed(() => parseInt(props.config?.ai_word_limit) || 250);
+const effectiveWordCount = computed(() => {
+    if (maxWordLimit.value > 0 && requestedWordCount.value > maxWordLimit.value) {
+        return maxWordLimit.value;
+    }
+    return requestedWordCount.value || 100;
+});
 
-    methods: {
-        toggleModal() {
-            this.modalActive = !this.modalActive;
-            if (this.modalActive) {
-                this.$nextTick(() => {
-                    if (this.$refs.promptInput) {
-                        this.$refs.promptInput.focus();
-                    }
-                });
-            } else {
-                this.resetState();
-                this.editor.commands.focus();
-            }
-        },
+function resetState() {
+    userPrompt.value = '';
+    requestedWordCount.value = 100;
+    error.value = null;
+    loading.value = false;
+}
 
-        handleClose() {
-            if (this.modalActive && !this.loading) {
-                this.closeModal();
-            }
-        },
+function closePopover() {
+    if (loading.value) return;
+    popoverRef.value?.close?.();
+    resetState();
+    props.editor?.commands?.focus();
+}
 
-        closeModal() {
-            if (this.loading) return;
-            this.modalActive = false;
-            this.$refs.popover.close();
-            this.resetState();
-            this.editor.commands.focus();
-        },
+async function generateContent() {
+    if (!userPrompt.value.trim() || loading.value) return;
 
-        resetState() {
-            this.userPrompt = '';
-            this.requestedWordCount = 100;
-            this.error = null;
-            this.loading = false;
-        },
+    loading.value = true;
+    error.value = null;
 
-        async generateContent() {
-            if (!this.userPrompt.trim() || this.loading) return;
+    try {
+        const csrfToken = Statamic.$config.get('csrfToken');
+        if (!csrfToken) {
+            throw new Error('CSRF token not found');
+        }
 
-            this.loading = true;
-            this.error = null;
+        const response = await fetch('/cp/ai-content/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                prompt: userPrompt.value,
+                system_prompt: systemPrompt.value,
+                word_limit: effectiveWordCount.value,
+            }),
+        });
 
-            try {
-                // Get CSRF token from Statamic's config
-                const csrfToken = Statamic.$config.get('csrfToken');
-                if (!csrfToken) {
-                    throw new Error('CSRF token not found');
-                }
+        const data = await response.json();
 
-                const response = await fetch('/cp/ai-content/generate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        prompt: this.userPrompt,
-                        system_prompt: this.systemPrompt,
-                        word_limit: this.effectiveWordCount,
-                    }),
-                });
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to generate content');
+        }
 
-                const data = await response.json();
+        if (data.content) {
+            insertContent(data.content);
+            closePopover();
+        } else {
+            throw new Error('No content received from API');
+        }
+    } catch (err) {
+        console.error('AI Content Builder error:', err);
+        error.value = err.message || 'An error occurred while generating content';
+    } finally {
+        loading.value = false;
+    }
+}
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to generate content');
-                }
+function insertContent(markdownContent) {
+    marked.setOptions({
+        breaks: true,
+        gfm: true,
+    });
 
-                if (data.content) {
-                    this.insertContent(data.content);
-                    this.closeModal();
-                } else {
-                    throw new Error('No content received from API');
-                }
-            } catch (err) {
-                console.error('AI Content Builder error:', err);
-                this.error = err.message || 'An error occurred while generating content';
-            } finally {
-                this.loading = false;
-            }
-        },
-
-        insertContent(markdownContent) {
-            // Configure marked for safe HTML output
-            marked.setOptions({
-                breaks: true,
-                gfm: true,
-            });
-
-            // Convert markdown to HTML
-            const html = marked.parse(markdownContent);
-
-            // Insert the HTML content into the Bard editor
-            this.editor.chain().focus().insertContent(html).run();
-        },
-    },
-};
+    const html = marked.parse(markdownContent);
+    props.editor.chain().focus().insertContent(html).run();
+}
 </script>
 
 <style scoped>

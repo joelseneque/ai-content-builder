@@ -13,7 +13,7 @@ A Statamic addon that adds an AI-powered content generation button to the Bard e
 
 ## Requirements
 
-- Statamic 5.x
+- Statamic 5.x or 6.x
 - PHP 8.2+
 - OpenAI API key
 
@@ -89,6 +89,22 @@ When editing a Bard field in the blueprint, you'll see three new configuration o
 5. Click "Generate Content" or press Cmd+Enter (Mac) / Ctrl+Enter (Windows)
 
 The generated content will be inserted into the editor as formatted HTML.
+
+## Building the Addon
+
+Install dependencies and build:
+
+```bash
+cd addons/joelseneque/ai-content-builder
+npm install
+npm run build
+```
+
+For development with auto-rebuild on changes:
+
+```bash
+npm run dev
+```
 
 ## Publishing Config
 
