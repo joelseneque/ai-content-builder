@@ -1,5 +1,5 @@
 <template>
-    <Popover ref="popoverRef" align="start" :inset="true">
+    <Popover ref="popoverRef" align="start" :inset="true" class="w-[420px]!">
         <template #trigger>
             <Button
                 variant="ghost"
@@ -10,7 +10,7 @@
             </Button>
         </template>
 
-        <div class="ai-content-builder-modal p-4" style="width: 400px; max-width: 90vw;">
+        <div class="ai-content-builder-modal w-[400px] max-w-[90vw] p-4">
             <h3 class="text-lg font-semibold mb-3">{{ __('AI Content Builder') }}</h3>
 
             <!-- Instructions -->
@@ -60,29 +60,19 @@
 
             <!-- Actions -->
             <div class="flex justify-end gap-2">
-                <button
-                    type="button"
-                    class="btn"
+                <Button
+                    :text="__('Cancel')"
                     @click="closePopover"
                     :disabled="loading"
-                >
-                    {{ __('Cancel') }}
-                </button>
-                <button
-                    type="button"
-                    class="btn-primary"
+                />
+                <Button
+                    icon="ai-spark"
+                    :text="loading ? __('Generating...') : __('Generate Content')"
+                    variant="primary"
+                    :loading="loading"
                     @click="generateContent"
                     :disabled="loading || !userPrompt.trim()"
-                >
-                    <span v-if="loading" class="flex items-center gap-2">
-                        <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        {{ __('Generating...') }}
-                    </span>
-                    <span v-else>{{ __('Generate Content') }}</span>
-                </button>
+                />
             </div>
         </div>
     </Popover>
